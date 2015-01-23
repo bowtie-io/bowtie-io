@@ -5,6 +5,10 @@ module Bowtie::Middleware
       base_url = "https://#{fqdn}"
       path     = rack_request.path
 
+      rack_request.env[:proxy_addon_headers] = {
+        'X-Forwarded-Host' => fqdn
+      }
+
       URI.join(base_url, path).to_s
     end
   end
