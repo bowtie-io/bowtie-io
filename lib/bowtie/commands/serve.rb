@@ -18,7 +18,7 @@ module Bowtie
 
         def process(options)
           Rack::Server.start(app: application(options),
-                             Port: options['port'],
+                             Port: options['port'] || 4000,
                              Host: options['host'],
                              daemonize: options['detach'])
         end
@@ -30,7 +30,7 @@ module Bowtie
           Rack::Builder.new do
             use Rack::CommonLogger
             use Rack::ShowExceptions
-            use Bowtie::Middleware::Rewrite
+            use Bowtie::Middleware::Rewrite, options
 
             # User management provided by BowTie /users/*
             map '/users' do
