@@ -5,9 +5,13 @@ require 'rack'
 require 'rack/streaming_proxy'
 
 module Bowtie
-  autoload :DevelopmentProxy,  'bowtie/development_proxy'
-  autoload :Settings,          'bowtie/settings'
-  autoload :VERSION,           'bowtie/version'
+  module Middleware
+    autoload :Proxy,   'bowtie/middleware/proxy'
+    autoload :Static,  'bowtie/middleware/static'
+  end
+
+  autoload :Settings,  'bowtie/settings'
+  autoload :VERSION,   'bowtie/version'
 end
 
 require 'bowtie/command'

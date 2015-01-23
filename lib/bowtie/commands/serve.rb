@@ -33,19 +33,21 @@ module Bowtie
 
             # User management provided by BowTie /users/*
             map '/users' do
-              use Bowtie::DevelopmentProxy
+              use Bowtie::Middleware::Proxy
             end
 
             # Bowtie APIs available at /bowtie/*
             map '/bowtie' do
-              use Bowtie::DevelopmentProxy
+              use Bowtie::Middleware::Proxy
             end
 
             # Static file server
-            use Rack::Static, urls: [''], root: options['destination'], index: 'index.html'
+            use Bowtie::Middleware::Static, urls: [''],
+              root: options['destination'],
+              index: 'index.html'
 
-            # 404 handler
-            run Proc.new { |env| [404, {"Content-Type" => "text/html"}, File.read(File.join(options['destination'], '404.html'))] }
+            # Backend API proxy through BowTie
+            run Bowtie::Middleware::Proxy.new(nil)
           end
         end
       end

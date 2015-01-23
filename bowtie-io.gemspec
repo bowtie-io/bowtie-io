@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'bowtie/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'bowtie-client'
+  s.name        = 'bowtie-io'
   s.version     = Bowtie::VERSION
   s.authors     = ['James Kassemi']
   s.email       = ['james@seedworthy.com']
@@ -21,11 +21,11 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   # Base static content generator and command utility (MIT)
-  s.add_runtime_dependency 'jekyll', '~> 2.5.3'
+  s.add_runtime_dependency 'jekyll', '~> 2.5'
 
   # Web server interface wrapper (MIT)
-  s.add_runtime_dependency 'rack', '~> 1.6.0'
+  s.add_runtime_dependency 'rack', '~> 1.6'
 
   # Proxy necessary requests to BowTie Project development site
-  s.add_runtime_dependency 'bowtie-io-rack-streaming-proxy', '~> 2.0.1'
+  s.add_runtime_dependency 'bowtie-io-rack-streaming-proxy', '~> 2.0'
 end
