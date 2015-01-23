@@ -30,6 +30,7 @@ module Bowtie
           Rack::Builder.new do
             use Rack::CommonLogger
             use Rack::ShowExceptions
+            use Bowtie::Middleware::Rewrite
 
             # User management provided by BowTie /users/*
             map '/users' do

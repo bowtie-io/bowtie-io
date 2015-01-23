@@ -10,7 +10,7 @@ module Bowtie::Middleware
       status, response, headers = @rack_static.call(env)
       status = status.to_i
 
-      if status != 200
+      if status != 200 && !status.between?(300, 399)
         status, response, headers = @app.call(env)
         status = status.to_i
 

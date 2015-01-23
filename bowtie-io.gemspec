@@ -28,4 +28,6 @@ Gem::Specification.new do |s|
 
   # Proxy necessary requests to BowTie Project development site
   s.add_runtime_dependency 'bowtie-io-rack-streaming-proxy', '~> 2.0'
+
+  s.add_runtime_dependency 'thin', '~> 1.6'
 end
