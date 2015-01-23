@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+# BowTie is based heavily on and utilizes the Jekyll blogging platform.
+# (https://github.com/jekyll/jekyll)
+
+STDOUT.sync = true
+
+$:.unshift File.join(File.dirname(__FILE__), *%w{ .. lib })
+
+require 'bowtie'
+require 'mercenary'
+
+Mercenary.program(:bowtie) do |p|
+  p.version       Bowtie::VERSION
+  p.description   "bowtie is a Jekyll-based API frontend development tool"
+  p.syntax        'bowtie <subcommand> [options]'
+
+  jekyll_commands = Jekyll::Command.subclasses
+  jekyll_commands.delete Jekyll::Commands::Serve
+  jekyll_commands.delete Jekyll::Commands::New
+  jekyll_commands.delete Jekyll::Commands::Build
+
+  bowtie_commands = Bowtie::Command.subclasses
+
+  (jekyll_commands + bowtie_commands).each { |c| c.init_with_program(p) }
+
+  p.action do |args, options|
+    if args.empty?
+      Jekyll.logger.error "A subcommand is required"
+      puts p
+    else
+      unless p.has_command?(args.first)
+        Jekyll.logger.abort_with "Invalid command. Use --help for more information"
+      end
+    end
+  end
+end
+
+# vim: set syntax=ruby
