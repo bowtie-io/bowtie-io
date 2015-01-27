@@ -9,7 +9,9 @@ module Bowtie::Middleware
         'X-Forwarded-Host' => fqdn
       }
 
-      URI.join(base_url, path).to_s
+      uri = URI.join(base_url, path)
+      uri.query = rack_request.query_string
+      uri.to_s
     end
   end
 end
