@@ -6,7 +6,8 @@ module Bowtie::Middleware
       path     = rack_request.path
 
       rack_request.env[:proxy_addon_headers] = {
-        'X-Forwarded-Host' => fqdn
+        'X-Forwarded-Host'        => fqdn,
+        'X-Bowtie-Client-Version' => Bowtie::VERSION
       }
 
       uri = URI.join(base_url, path)
