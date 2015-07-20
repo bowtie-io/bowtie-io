@@ -32,7 +32,9 @@ module Bowtie::Middleware
       path     = rack_request.path
 
       rack_request.env[:proxy_addon_headers] = {
-        'X-Forwarded-Host'        => fqdn,
+        'X-Forwarded-Host'        => rack_request.host,
+        'X-Forwarded-Port'        => rack_request.port,
+        'X-Forwarded-Proto'       => 'http',
         'X-Bowtie-Client-Version' => Bowtie::VERSION
       }
 
