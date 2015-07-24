@@ -35,6 +35,7 @@ module Bowtie::Middleware
         'X-Forwarded-Host'        => rack_request.host_with_port,
         'X-Forwarded-Port'        => rack_request.port,
         'X-Forwarded-Proto'       => 'http',
+        'X-Forwarded-Scheme'      => 'http',
         'X-Bowtie-Client-Version' => Bowtie::VERSION
       }
 
