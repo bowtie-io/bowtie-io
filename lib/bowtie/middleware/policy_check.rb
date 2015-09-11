@@ -219,7 +219,13 @@ module Bowtie::Middleware
             return false if profile.nil?
 
             values.each do |key, value|
-              return false if profile[key] != value
+              if value == true
+                return false if !profile.data[key]
+              elsif value == false
+                return false if !!profile.data[key]
+              else
+                return false if profile.data[key] != value
+              end
             end
           end
 
