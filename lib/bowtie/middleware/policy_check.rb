@@ -215,16 +215,16 @@ module Bowtie::Middleware
           true
         else
           profile_restrictions.each do |scope,values|
-            profile = user_profile(rack_request, scope)
-            return false if profile.nil?
+            profile_data = user_profile(rack_request, scope)
+            return false if profile_data.nil?
 
             values.each do |key, value|
               if value == true
-                return false if !profile.data[key]
+                return false if !profile_data[key]
               elsif value == false
-                return false if !!profile.data[key]
+                return false if !!profile_data[key]
               else
-                return false if profile.data[key] != value
+                return false if profile_data[key] != value
               end
             end
           end
