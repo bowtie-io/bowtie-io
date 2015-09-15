@@ -8,6 +8,13 @@ module Bowtie::Middleware
       status, headers, response = @app.call(env)
 
       if headers['X-Bowtie-Client-Session']
+        rr = Rack::Request.new(env)
+
+        open "/Users/james/Documents/src/bowtie-lite/tmp.txt", "a" do |f|
+          f << "Path: #{rr.path} / Headers: #{headers.inspect}\n"
+        end
+
+
         env['rack.session']['user'] = JSON.parse(headers['X-Bowtie-Client-Session'])
       end
 

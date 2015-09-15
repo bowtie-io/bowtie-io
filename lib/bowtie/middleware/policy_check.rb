@@ -48,6 +48,7 @@ module Bowtie::Middleware
       CONFIG_PLANS_KEY   = 'plans'
       CONFIG_PATH_KEY    = 'path'
       CONFIG_PROFILE_KEY = 'profile'
+      CONFIG_STATUS_KEY  = 'status'
 
       def branch; 'development' end
 
@@ -102,6 +103,7 @@ module Bowtie::Middleware
         methods = methods_from_permitted_section_config(config)
         plans   = plans_from_permitted_section_config(config)
         profile_restrictions = profile_restrictions_from_permitted_section_config(config)
+        status = status_from_permitted_section_config(config)
 
         records = []
 
@@ -112,7 +114,8 @@ module Bowtie::Middleware
                                   method,
                                   plan,
                                   policy_path.length,
-                                  profile_restrictions)
+                                  profile_restrictions,
+                                  status)
           end
         end
 
@@ -153,6 +156,15 @@ module Bowtie::Middleware
         _profile_restrictions_config = config[CONFIG_PROFILE_KEY]
       end
 
+      def status_from_permitted_section_config(config)
+        status_config = config[CONFIG_STATUS_KEY]
+
+        if status_config.nil? || status_config == '*'
+          nil
+        else
+          status_config
+        end
+      end
     end
 
     Policy = Struct.new(:branch,
@@ -160,7 +172,8 @@ module Bowtie::Middleware
                         :request_method,
                         :plan,
                         :weight,
-                        :profile_restrictions) do
+                        :profile_restrictions,
+                        :status) do
       class << self
         attr_reader :all
 
@@ -196,7 +209,8 @@ module Bowtie::Middleware
       def permits?(rack_request)
         request_method_permitted?(rack_request) &&
           plan_permitted?(rack_request) &&
-          profile_permitted?(rack_request)
+          profile_permitted?(rack_request) &&
+          status_permitted?(rack_request)
       end
 
       private
@@ -231,6 +245,11 @@ module Bowtie::Middleware
 
           return true
         end
+      end
+
+      def status_permitted?(rack_request)
+        status.nil? ||
+          (rack_request.env['rack.session']['user']['status'] rescue nil) == status
       end
 
       def user_profile(rack_request, scope)
