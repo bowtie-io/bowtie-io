@@ -5,7 +5,7 @@ module Bowtie::Middleware
   class Rewrite
     def initialize(app, options)
       @app             = app
-      @remote_base_url = "https://#{Bowtie::Settings['project']['fqdn']['development']}"
+      @remote_base_url = "https://#{Bowtie::Settings['client']['fqdn']}"
       @local_base_url  = "http://#{options['host']}:#{options['port']}"
     end
 

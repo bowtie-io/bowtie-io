@@ -263,10 +263,11 @@ module Bowtie::Middleware
       def user_profile_endpoint_url(user_id, scope)
         secret_key = Bowtie::Settings['project']['secret_key'] rescue nil
         secret_key ||= Bowtie::Settings['project']['environments']['development']['secret_key'] rescue nil
+        secret_key ||= Bowtie::Settings['client']['secret_key'] rescue nil
 
         raise SecretKeyMissingError.new if secret_key.nil?
 
-        URI::HTTPS.build(host: Bowtie::Settings['project']['fqdn']['development'],
+        URI::HTTPS.build(host: Bowtie::Settings['client']['fqdn'],
                          userinfo: "#{Bowtie::Settings['project']['secret_key']}:",
                          path: "/bowtie/api/users/#{user_id}/profile.json",
                          query: "scope=#{scope}").to_s

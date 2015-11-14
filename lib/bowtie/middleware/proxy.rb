@@ -27,7 +27,7 @@ module Bowtie::Middleware
 
   class Platform < Rack::StreamingProxy::Proxy
     def destination_uri(rack_request)
-      fqdn     = Bowtie::Settings['project']['fqdn']['development']
+      fqdn     = Bowtie::Settings['client']['fqdn']
       base_url = "https://#{fqdn}"
       path     = rack_request.path
 
