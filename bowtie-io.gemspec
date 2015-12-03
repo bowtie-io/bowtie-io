@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   # Base static content generator and command utility (MIT)
-  s.add_runtime_dependency 'jekyll', '~> 2.5'
+  s.add_runtime_dependency 'jekyll', '~> 3.0'
 
   # Web server interface wrapper (MIT)
   s.add_runtime_dependency 'rack', '~> 1.6'
