@@ -1,16 +1,16 @@
 module Bowtie::Middleware
   class Proxy
     def initialize(*args)
-      @platform = Platform.new(*args)
-      @backend  = Backend.new(*args)
+      @platform = Platform.new
+      @backend  = Backend.new
     end
 
     def call(env)
       status, headers, body = @platform.call(env)
 
       if status.to_i == 305
-        env[:proxy_addon_headers] = JSON.load(headers['X-Bowtie-Client-Proxy-Headers'])
-        env[:proxy_location] = headers['Location']
+        env[:proxy_addon_headers] = JSON.load(headers['X-Bowtie-Client-Proxy-Headers'].first)
+        env[:proxy_location] = headers['Location'].first
         @backend.call(env)
       else
         [status, headers, body]
@@ -19,29 +19,50 @@ module Bowtie::Middleware
   end
 
   private
-  class Backend < Rack::StreamingProxy::Proxy
-    def destination_uri(rack_request)
-      rack_request.env[:proxy_location]
+  class Backend < Rack::Proxy
+    def self.extract_http_request_headers(env)
+      addon_headers = env[:proxy_addon_headers].inject({}) { |h,v| h[v[0]] = v[1].to_s; h }
+      super(env).merge!(addon_headers)
+    end
+
+    protected
+    def perform_request(env)
+      @backend = URI(env[:proxy_location])
+
+      env['REQUEST_URI'] = @backend.request_uri
+      env['HTTP_HOST']   = @backend.host
+
+      super(env)
     end
   end
 
-  class Platform < Rack::StreamingProxy::Proxy
-    def destination_uri(rack_request)
-      fqdn     = Bowtie::Settings['client']['fqdn']
-      base_url = "https://#{fqdn}"
-      path     = rack_request.path
+  class Platform < Rack::Proxy
+    def rewrite_env(env)
+      rack_request = Rack::Request.new(env)
 
-      rack_request.env[:proxy_addon_headers] = {
-        'X-Forwarded-Host'        => rack_request.host_with_port,
-        'X-Forwarded-Port'        => rack_request.port,
-        'X-Forwarded-Proto'       => 'http',
-        'X-Forwarded-Scheme'      => 'http',
-        'X-Bowtie-Client-Version' => Bowtie::VERSION
-      }
+      env['HTTPS']       = 'on'
+      env['SERVER_PORT'] = 443
+      env['HTTP_HOST']   = Bowtie::Settings['client']['fqdn']
 
-      uri = URI.join(base_url, path)
-      uri.query = rack_request.query_string
-      uri.to_s
+      env['HTTP_X_FORWARDED_HOST']        = rack_request.host_with_port
+      env['HTTP_X_FORWARDED_PROTO']       = rack_request.port.to_s
+      env['HTTP_X_FORWARDED_SCHEME']      = 'http'
+      env['HTTP_X_BOWTIE_CLIENT_VERSION'] = Bowtie::VERSION
+
+      env
+    end
+
+    def rewrite_response(triplet)
+      status, headers, body = triplet
+
+      headers.delete('Transfer-Encoding')
+
+      [status, headers, body]
+    end
+
+    protected
+    def perform_request(env)
+       super(env)
     end
   end
 end

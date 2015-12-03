@@ -2,7 +2,7 @@ require 'rubygems'
 require 'json'
 require 'jekyll'
 require 'rack'
-require 'rack/streaming_proxy'
+require 'rack/proxy'
 require 'restclient'
 
 module Bowtie

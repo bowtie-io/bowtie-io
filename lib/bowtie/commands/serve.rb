@@ -57,7 +57,7 @@ module Bowtie
               index: 'index.html'
 
             # Backend API proxy through BowTie
-            run Bowtie::Middleware::Proxy.new(nil)
+            run Bowtie::Middleware::Proxy.new
           end
         end
       end

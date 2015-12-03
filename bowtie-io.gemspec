@@ -27,11 +27,11 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'rack', '~> 1.6'
 
   # Proxy necessary requests to BowTie Project development site
-  s.add_runtime_dependency 'bowtie-io-rack-streaming-proxy', '~> 2.0'
+  s.add_runtime_dependency 'rack-proxy', '~> 0.5.17'
 
   # Request information for user info and profiles from bowtie API
   s.add_runtime_dependency 'rest-client', '~> 1.8.0'
- 
+
   # scss compilation requires more recent version of sass
   s.add_runtime_dependency 'sass', '~> 3.4'
 end

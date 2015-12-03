@@ -1,3 +1,3 @@
 module Bowtie
-  VERSION = '1.0.16'
+  VERSION = '1.2.0'
 end
