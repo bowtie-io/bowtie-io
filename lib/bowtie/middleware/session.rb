@@ -8,7 +8,7 @@ module Bowtie::Middleware
       status, headers, response = @app.call(env)
 
       if headers['X-Bowtie-Client-Session']
-        env['rack.session']['user'] = JSON.parse(headers['X-Bowtie-Client-Session'])
+        env['rack.session']['user'] = JSON.parse(headers['X-Bowtie-Client-Session'].first)
       end
 
       [status, headers, response]
