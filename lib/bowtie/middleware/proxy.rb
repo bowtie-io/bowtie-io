@@ -1,3 +1,5 @@
+require 'pry'
+
 module Bowtie::Middleware
   class Proxy
     def initialize(*args)
@@ -40,14 +42,14 @@ module Bowtie::Middleware
     def rewrite_env(env)
       rack_request = Rack::Request.new(env)
 
+      env['HTTP_X_FORWARDED_HOST']        =  rack_request.host_with_port
+      env['HTTP_X_FORWARDED_PROTO']       = 'http'
+      env['HTTP_X_FORWARDED_SCHEME']      = 'http'
+      env['HTTP_X_BOWTIE_CLIENT_VERSION'] = Bowtie::VERSION
+
       env['HTTPS']       = 'on'
       env['SERVER_PORT'] = 443
       env['HTTP_HOST']   = Bowtie::Settings['client']['fqdn']
-
-      env['HTTP_X_FORWARDED_HOST']        = rack_request.host_with_port
-      env['HTTP_X_FORWARDED_PROTO']       = rack_request.port.to_s
-      env['HTTP_X_FORWARDED_SCHEME']      = 'http'
-      env['HTTP_X_BOWTIE_CLIENT_VERSION'] = Bowtie::VERSION
 
       env
     end
@@ -62,7 +64,12 @@ module Bowtie::Middleware
 
     protected
     def perform_request(env)
-       super(env)
+      @backend = URI(env['REQUEST_URI'])
+      @backend.host = Bowtie::Settings['client']['fqdn']
+      @backend.port = 443
+      @backend.scheme = 'https'
+
+      super(env)
     end
   end
 end
