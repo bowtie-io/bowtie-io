@@ -7,11 +7,12 @@ require 'restclient'
 
 module Bowtie
   module Middleware
-    autoload :Proxy       , 'bowtie/middleware/proxy'
-    autoload :Static      , 'bowtie/middleware/static'
-    autoload :Rewrite     , 'bowtie/middleware/rewrite'
-    autoload :PolicyCheck , 'bowtie/middleware/policy_check'
-    autoload :Session     , 'bowtie/middleware/session'
+    autoload :Proxy        , 'bowtie/middleware/proxy'
+    autoload :Static       , 'bowtie/middleware/static'
+    autoload :NamedActions , 'bowtie/middleware/named_actions'
+    autoload :Rewrite      , 'bowtie/middleware/rewrite'
+    autoload :PolicyCheck  , 'bowtie/middleware/policy_check'
+    autoload :Session      , 'bowtie/middleware/session'
   end
 
   autoload :Settings,  'bowtie/settings'

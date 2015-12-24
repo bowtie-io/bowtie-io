@@ -35,6 +35,9 @@ module Bowtie
             use Rack::Session::Cookie, key: 'client.session',
               secret: '_bowtie_client_local'
 
+            # Redirect overrides based on local settings.json
+            use Bowtie::Middleware::NamedActions
+
             use Bowtie::Middleware::Rewrite, options
 
             # User management provided by BowTie /users/*
