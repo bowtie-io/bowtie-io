@@ -1,5 +1,3 @@
-require 'pry'
-
 module Bowtie::Middleware
   class Proxy
     def initialize(*args)
