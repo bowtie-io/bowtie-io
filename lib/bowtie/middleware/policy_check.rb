@@ -50,8 +50,6 @@ module Bowtie::Middleware
       CONFIG_PROFILE_KEY = 'profile'
       CONFIG_STATUS_KEY  = 'status'
 
-      def branch; 'development' end
-
       def policy_records(source)
         records = Dir["#{source}/**/.bowtie.yml"].collect { |path|
           policy_records_for_path(path.gsub(source, ''), File.read(path))
@@ -63,8 +61,7 @@ module Bowtie::Middleware
       end
 
       def default_permit_all
-        Policy.new(branch,
-                   '',
+        Policy.new('',
                    nil,
                    nil,
                    0,
@@ -76,9 +73,9 @@ module Bowtie::Middleware
         base_path = "/#{base_path}" unless base_path.start_with? '/'
         base_path = base_path[0..-2] if base_path.end_with? '/'
 
-        branch_config = YAML.load(content)[branch] || {}
+        environment_config = YAML.load(content) || {}
 
-        permitted_section_configs = branch_config[CONFIG_BLOCK_KEY] || []
+        permitted_section_configs = environment_config[CONFIG_BLOCK_KEY] || []
         permitted_section_configs = [permitted_section_configs] unless permitted_section_configs.is_a? Array
 
         policy_records_from_permitted_section_configs(base_path, permitted_section_configs)
@@ -109,8 +106,7 @@ module Bowtie::Middleware
 
         methods.each do |method|
           plans.each do |plan|
-            records << Policy.new(branch,
-                                  policy_path,
+            records << Policy.new(policy_path,
                                   method,
                                   plan,
                                   policy_path.length,
@@ -167,8 +163,7 @@ module Bowtie::Middleware
       end
     end
 
-    Policy = Struct.new(:branch,
-                        :path,
+    Policy = Struct.new(:path,
                         :request_method,
                         :plan,
                         :weight,
@@ -194,8 +189,7 @@ module Bowtie::Middleware
 
         def applicable_for(rack_request)
           applicable_to_request = all.select { |policy|
-            policy.branch == 'development' &&
-              rack_request.path.start_with?(policy.path)
+            rack_request.path.start_with?(policy.path)
           }.sort_by!(&:weight).reverse
 
           heaviest = applicable_to_request.first
